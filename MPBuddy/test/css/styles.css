@@ -1,7 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.item {
+    border: 1px solid #ddd;
+    margin: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2c3e50; /* Dark blue-gray */
+    margin-bottom: 10px;
+    text-transform: capitalize; /* Capitalizes the first letter of each word */
+}
+
+.description {
+    font-size: 16px;
+    color: #7f8c8d; /* Muted gray */
+    line-height: 1.5;
+    margin-top: 5px;
+}
+
+/* Style for the "No data found" message */
 .no-data {
     font-size: 18px;
     color: #ff0000;
     text-align: center;
     margin: 20px 0;
-	background-color: rad
+    font-weight: bold;
+}
+
+/* Optional: Add hover effect for the item */
+.item:hover {
+    background-color: #f4f4f4; /* Light gray background on hover */
+    transition: background-color 0.3s ease;
 }
