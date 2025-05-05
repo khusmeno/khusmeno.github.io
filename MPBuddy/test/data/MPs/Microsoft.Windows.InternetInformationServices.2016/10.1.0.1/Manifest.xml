@@ -1,0 +1,5 @@
+<ManagementPack ContentReadable="true" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Manifest>
+		<Name>Microsoft Windows Server 2016 Internet Information Services 10</Name>
+	</Manifest>
+</ManagementPack>

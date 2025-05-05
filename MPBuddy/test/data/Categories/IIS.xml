@@ -1,0 +1,23 @@
+<Category>
+	<DisplayName>Internet Information Services (IIS)</DisplayName>
+	<Description>Microsoft System Center Management Pack for Internet Information Service 2016 and 1709 Plus. The Internet Information Services Management Pack provides proactive and reactive monitoring of your Internet Information Services (IIS) environment.</Description>
+	<LatestVersion>10.1.0.1</LatestVersion>
+	<Links>
+		<Link>
+			<DisplayName>Microsoft System Center Management Pack for Internet Information Service 2016 and 1709 Plus</DisplayName>
+			<Url>https://www.microsoft.com/en-us/download/details.aspx?id=54445</Url>
+		</Link>
+	</Links>
+	<MPs>
+		<MP>
+			<ID>Microsoft.Windows.InternetInformationServices.CommonLibrary</ID>
+			<Version>10.1.0.1</Version>
+			<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+		</MP>
+		<MP>
+			<ID>Microsoft.Windows.InternetInformationServices.2016</ID>
+			<Version>10.1.0.1</Version>
+			<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+		</MP>
+		</MPs>
+</Category>

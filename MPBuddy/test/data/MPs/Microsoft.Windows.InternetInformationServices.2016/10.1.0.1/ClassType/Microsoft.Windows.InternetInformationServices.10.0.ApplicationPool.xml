@@ -1,0 +1,5 @@
+<ClassType ID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool" Accessibility="Public" Abstract="false" Base="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool" Hosted="true" Singleton="false">
+	<Property ID="DotNetVersion" Type="string" Key="false" CaseSensitive="false" MinLength="0" Length="255" />
+	<Property ID="QueueLength" Type="string" Key="false" CaseSensitive="false" MinLength="0" Length="255" />
+	<Property ID="Enable32BitApplications" Type="bool" Key="false" CaseSensitive="false" MinLength="0" Length="255" />
+</ClassType>

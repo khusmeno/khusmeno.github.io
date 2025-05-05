@@ -1,0 +1,14 @@
+<Categories>
+	<Category>
+		<FileName>A10.xml</FileName>
+		<DisplayName>A10 Management Pack</DisplayName>
+	</Category>
+	<Category>
+		<FileName>AD2008Audit.xml</FileName>
+		<DisplayName>Active Directory 2008 Audit Management Pack</DisplayName>
+	</Category>
+	<Category>
+		<FileName>IIS.xml</FileName>
+		<DisplayName>Internet Information Services (IIS)</DisplayName>
+	</Category>
+</Categories>

@@ -1,0 +1,4 @@
+<RelationshipType ID="Microsoft.Windows.InternetInformationServices.10.0.FTPServer.Hosts.Microsoft.Windows.InternetInformationServices.10.0.FTPSite" Accessibility="Public" Abstract="false" Base="System!System.Hosting">
+	<Source>Microsoft.Windows.InternetInformationServices.10.0.FTPServer</Source>
+	<Target>Microsoft.Windows.InternetInformationServices.10.0.FTPSite</Target>
+</RelationshipType>

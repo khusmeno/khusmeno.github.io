@@ -1,0 +1,51 @@
+<ManagementPack ContentReadable="true" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<Manifest>
+		<References>
+			<Reference Alias="SCDW">
+				<ID>Microsoft.SystemCenter.DataWarehouse.Library</ID>
+				<Version>6.1.7221.0</Version>
+				<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+			</Reference>
+			<Reference Alias="SC">
+				<ID>Microsoft.SystemCenter.Library</ID>
+				<Version>6.1.7221.0</Version>
+				<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+			</Reference>
+			<Reference Alias="Windows">
+				<ID>Microsoft.Windows.Library</ID>
+				<Version>6.1.7221.0</Version>
+				<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+			</Reference>
+			<Reference Alias="WindowsvNextDiscovery">
+				<ID>Microsoft.Windows.Server.2016.Discovery</ID>
+				<Version>10.0.0.0</Version>
+				<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+			</Reference>
+			<Reference Alias="WindowsLibrary">
+				<ID>Microsoft.Windows.Server.Library</ID>
+				<Version>10.0.0.0</Version>
+				<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+			</Reference>
+			<Reference Alias="SystemHealth">
+				<ID>System.Health.Library</ID>
+				<Version>6.1.7221.0</Version>
+				<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+			</Reference>
+			<Reference Alias="System">
+				<ID>System.Library</ID>
+				<Version>6.1.7221.0</Version>
+				<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+			</Reference>
+			<Reference Alias="SystemPerf">
+				<ID>System.Performance.Library</ID>
+				<Version>6.1.7221.0</Version>
+				<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+			</Reference>
+			<Reference Alias="IISCommon">
+				<ID>Microsoft.Windows.InternetInformationServices.CommonLibrary</ID>
+				<Version>10.0.9.0</Version>
+				<PublicKeyToken>31bf3856ad364e35</PublicKeyToken>
+			</Reference>
+		</References>
+	</Manifest>
+</ManagementPack>

@@ -1,0 +1,422 @@
+<ManagementPack ContentReadable="true" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<TypeDefinitions>
+		<MonitorTypes>
+			<UnitMonitorType ID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.EventLogManualReset2StateMonitorType" Accessibility="Internal">
+				<MonitorTypeStates>
+					<MonitorTypeState ID="ErrorEventRaised" NoDetection="false" />
+					<MonitorTypeState ID="ManualResetEventRaised" NoDetection="true" />
+				</MonitorTypeStates>
+				<Configuration>
+					<IncludeSchemaTypes>
+						<SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+					</IncludeSchemaTypes>
+					<xsd:element minOccurs="1" name="LogName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="Expression" type="ExpressionType" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<MonitorImplementation>
+					<MemberModules>
+						<DataSource ID="DS" TypeID="Microsoft.Windows.Server.IIS.10.0.WarningAndErrorEventProvider">
+							<LogName>$Config/LogName$</LogName>
+						</DataSource>
+						<ConditionDetection ID="Filter" TypeID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.EventFilter">
+							<Expression>$Config/Expression$</Expression>
+						</ConditionDetection>
+					</MemberModules>
+					<RegularDetections>
+						<RegularDetection MonitorTypeStateID="ErrorEventRaised">
+							<Node ID="Filter">
+								<Node ID="DS" />
+							</Node>
+						</RegularDetection>
+					</RegularDetections>
+				</MonitorImplementation>
+			</UnitMonitorType>
+			<UnitMonitorType ID="Microsoft.Windows.InternetInformationServices.10.0.RepeatedEventLogManualReset2StateMonitorType" Accessibility="Internal">
+				<MonitorTypeStates>
+					<MonitorTypeState ID="RepeatedEventRaised" NoDetection="false" />
+					<MonitorTypeState ID="ManualResetEventRaised" NoDetection="true" />
+				</MonitorTypeStates>
+				<Configuration>
+					<IncludeSchemaTypes>
+						<SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+					</IncludeSchemaTypes>
+					<xsd:element name="RepeatedComputerName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="RepeatedLogName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="RepeatedExpression" type="ExpressionType" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="NumberOfSeconds" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="NumberOfOccurrences" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="NumberOfSeconds" Selector="$Config/NumberOfSeconds$" ParameterType="int" />
+					<OverrideableParameter ID="NumberOfOccurrences" Selector="$Config/NumberOfOccurrences$" ParameterType="int" />
+				</OverrideableParameters>
+				<MonitorImplementation>
+					<MemberModules>
+						<DataSource ID="RepeatedDataSource" TypeID="Windows!Microsoft.Windows.BaseEventProvider">
+							<ComputerName>$Config/RepeatedComputerName$</ComputerName>
+							<LogName>$Config/RepeatedLogName$</LogName>
+						</DataSource>
+						<ConditionDetection ID="RepeatedFilterCondition" TypeID="System!System.ExpressionFilter">
+							<Expression>$Config/RepeatedExpression$</Expression>
+						</ConditionDetection>
+						<ConditionDetection ID="RepeatedDataCondition" TypeID="System!System.ConsolidatorCondition">
+							<Consolidator>
+								<ConsolidationProperties />
+								<TimeControl>
+									<WithinTimeSchedule>
+										<Interval>$Config/NumberOfSeconds$</Interval>
+									</WithinTimeSchedule>
+								</TimeControl>
+								<CountingCondition>
+									<Count>$Config/NumberOfOccurrences$</Count>
+									<CountMode>OnNewItemTestOutputRestart_OnTimerRestart</CountMode>
+								</CountingCondition>
+							</Consolidator>
+						</ConditionDetection>
+					</MemberModules>
+					<RegularDetections>
+						<RegularDetection MonitorTypeStateID="RepeatedEventRaised">
+							<Node ID="RepeatedDataCondition">
+								<Node ID="RepeatedFilterCondition">
+									<Node ID="RepeatedDataSource" />
+								</Node>
+							</Node>
+						</RegularDetection>
+					</RegularDetections>
+				</MonitorImplementation>
+			</UnitMonitorType>
+			<UnitMonitorType ID="Microsoft.Windows.InternetInformationServices.10.0.WebSite.EventLogManualReset2StateMonitorType" Accessibility="Internal">
+				<MonitorTypeStates>
+					<MonitorTypeState ID="ErrorEventRaised" NoDetection="false" />
+					<MonitorTypeState ID="ManualResetEventRaised" NoDetection="true" />
+				</MonitorTypeStates>
+				<Configuration>
+					<IncludeSchemaTypes>
+						<SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+					</IncludeSchemaTypes>
+					<xsd:element minOccurs="1" name="LogName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="Expression" type="ExpressionType" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<MonitorImplementation>
+					<MemberModules>
+						<DataSource ID="DS" TypeID="Microsoft.Windows.Server.IIS.10.0.WarningAndErrorEventProvider">
+							<LogName>$Config/LogName$</LogName>
+						</DataSource>
+						<ConditionDetection ID="Filter" TypeID="Microsoft.Windows.InternetInformationServices.10.0.WebSite.EventFilter">
+							<Expression>$Config/Expression$</Expression>
+						</ConditionDetection>
+					</MemberModules>
+					<RegularDetections>
+						<RegularDetection MonitorTypeStateID="ErrorEventRaised">
+							<Node ID="Filter">
+								<Node ID="DS" />
+							</Node>
+						</RegularDetection>
+					</RegularDetections>
+				</MonitorImplementation>
+			</UnitMonitorType>
+			<UnitMonitorType ID="Microsoft.Windows.InternetInformationServices.CheckLegacySMTPVirtualServerState.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount">
+				<MonitorTypeStates>
+					<MonitorTypeState ID="Started" NoDetection="false" />
+					<MonitorTypeState ID="Stopped" NoDetection="false" />
+				</MonitorTypeStates>
+				<Configuration>
+					<IncludeSchemaTypes>
+						<SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+					</IncludeSchemaTypes>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="SiteID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<MonitorImplementation>
+					<MemberModules>
+						<DataSource ID="DS" TypeID="Microsoft.Windows.Server.IIS.IISLegacyStateDataSource.10">
+							<PeriodInSeconds>$Config/PeriodInSeconds$</PeriodInSeconds>
+							<Type>8</Type>
+						</DataSource>
+						<ProbeAction ID="SMTPVirtualServerStateProbe" TypeID="Microsoft.Windows.Server.IIS.IISLegacyStateProbe.10">
+							<Type>8</Type>
+						</ProbeAction>
+						<ConditionDetection ID="FilterStarted" TypeID="System!System.ExpressionFilter">
+							<Expression>
+								<SimpleExpression>
+									<ValueExpression>
+										<XPathQuery Type="UnsignedInteger">Property[@Name='$Config/SiteID$']</XPathQuery>
+									</ValueExpression>
+									<Operator>Equal</Operator>
+									<ValueExpression>
+										<Value Type="UnsignedInteger">2</Value>
+									</ValueExpression>
+								</SimpleExpression>
+							</Expression>
+						</ConditionDetection>
+						<ConditionDetection ID="FilterStopped" TypeID="System!System.ExpressionFilter">
+							<Expression>
+								<SimpleExpression>
+									<ValueExpression>
+										<XPathQuery Type="UnsignedInteger">Property[@Name='$Config/SiteID$']</XPathQuery>
+									</ValueExpression>
+									<Operator>NotEqual</Operator>
+									<ValueExpression>
+										<Value Type="UnsignedInteger">2</Value>
+									</ValueExpression>
+								</SimpleExpression>
+							</Expression>
+						</ConditionDetection>
+					</MemberModules>
+					<RegularDetections>
+						<RegularDetection MonitorTypeStateID="Started">
+							<Node ID="FilterStarted">
+								<Node ID="DS" />
+							</Node>
+						</RegularDetection>
+						<RegularDetection MonitorTypeStateID="Stopped">
+							<Node ID="FilterStopped">
+								<Node ID="DS" />
+							</Node>
+						</RegularDetection>
+					</RegularDetections>
+					<OnDemandDetections>
+						<OnDemandDetection MonitorTypeStateID="Started">
+							<Node ID="FilterStarted">
+								<Node ID="SMTPVirtualServerStateProbe" />
+							</Node>
+						</OnDemandDetection>
+						<OnDemandDetection MonitorTypeStateID="Stopped">
+							<Node ID="FilterStopped">
+								<Node ID="SMTPVirtualServerStateProbe" />
+							</Node>
+						</OnDemandDetection>
+					</OnDemandDetections>
+				</MonitorImplementation>
+			</UnitMonitorType>
+			<UnitMonitorType ID="Microsoft.Windows.Server.IIS.IISApplicationPoolStateMonitor.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount">
+				<MonitorTypeStates>
+					<MonitorTypeState ID="Started" NoDetection="false" />
+					<MonitorTypeState ID="Stopped" NoDetection="false" />
+				</MonitorTypeStates>
+				<Configuration>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="PoolID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<MonitorImplementation>
+					<MemberModules>
+						<DataSource ID="DS" TypeID="Microsoft.Windows.Server.IIS.IISStateDataSource.10">
+							<PeriodInSeconds>$Config/PeriodInSeconds$</PeriodInSeconds>
+							<Type>All</Type>
+						</DataSource>
+						<ConditionDetection ID="FilterStarted" TypeID="System!System.ExpressionFilter">
+							<Expression>
+								<SimpleExpression>
+									<ValueExpression>
+										<XPathQuery>Property[@Name='$Config/PoolID$']</XPathQuery>
+									</ValueExpression>
+									<Operator>Equal</Operator>
+									<ValueExpression>
+										<Value>Started</Value>
+									</ValueExpression>
+								</SimpleExpression>
+							</Expression>
+						</ConditionDetection>
+						<ConditionDetection ID="StartedMapper" TypeID="SystemPerf!System.Performance.DataGenericMapper">
+							<ObjectName>Application Pool</ObjectName>
+							<CounterName>State</CounterName>
+							<InstanceName>$Config/PoolID$</InstanceName>
+							<Value>1</Value>
+						</ConditionDetection>
+						<ConditionDetection ID="StoppedMapper" TypeID="SystemPerf!System.Performance.DataGenericMapper">
+							<ObjectName>Application Pool</ObjectName>
+							<CounterName>State</CounterName>
+							<InstanceName>$Config/PoolID$</InstanceName>
+							<Value>0</Value>
+						</ConditionDetection>
+						<ConditionDetection ID="FilterStopped" TypeID="System!System.ExpressionFilter">
+							<Expression>
+								<SimpleExpression>
+									<ValueExpression>
+										<XPathQuery>Property[@Name='$Config/PoolID$']</XPathQuery>
+									</ValueExpression>
+									<Operator>NotEqual</Operator>
+									<ValueExpression>
+										<Value>Started</Value>
+									</ValueExpression>
+								</SimpleExpression>
+							</Expression>
+						</ConditionDetection>
+					</MemberModules>
+					<RegularDetections>
+						<RegularDetection MonitorTypeStateID="Started">
+							<Node ID="StartedMapper">
+								<Node ID="FilterStarted">
+									<Node ID="DS" />
+								</Node>
+							</Node>
+						</RegularDetection>
+						<RegularDetection MonitorTypeStateID="Stopped">
+							<Node ID="StoppedMapper">
+								<Node ID="FilterStopped">
+									<Node ID="DS" />
+								</Node>
+							</Node>
+						</RegularDetection>
+					</RegularDetections>
+				</MonitorImplementation>
+			</UnitMonitorType>
+			<UnitMonitorType ID="Microsoft.Windows.Server.IIS.IISFTPSiteStateMonitor.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount">
+				<MonitorTypeStates>
+					<MonitorTypeState ID="Started" NoDetection="false" />
+					<MonitorTypeState ID="Stopped" NoDetection="false" />
+				</MonitorTypeStates>
+				<Configuration>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="SiteID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<MonitorImplementation>
+					<MemberModules>
+						<DataSource ID="DS" TypeID="Microsoft.Windows.Server.IIS.IISStateDataSource.10">
+							<PeriodInSeconds>$Config/PeriodInSeconds$</PeriodInSeconds>
+							<Type>All</Type>
+						</DataSource>
+						<ConditionDetection ID="FilterStarted" TypeID="System!System.ExpressionFilter">
+							<Expression>
+								<SimpleExpression>
+									<ValueExpression>
+										<XPathQuery>Property[@Name='$Config/SiteID$']</XPathQuery>
+									</ValueExpression>
+									<Operator>Equal</Operator>
+									<ValueExpression>
+										<Value>Started</Value>
+									</ValueExpression>
+								</SimpleExpression>
+							</Expression>
+						</ConditionDetection>
+						<ConditionDetection ID="FilterStopped" TypeID="System!System.ExpressionFilter">
+							<Expression>
+								<SimpleExpression>
+									<ValueExpression>
+										<XPathQuery>Property[@Name='$Config/SiteID$']</XPathQuery>
+									</ValueExpression>
+									<Operator>NotEqual</Operator>
+									<ValueExpression>
+										<Value>Started</Value>
+									</ValueExpression>
+								</SimpleExpression>
+							</Expression>
+						</ConditionDetection>
+						<ConditionDetection ID="StartedMapper" TypeID="SystemPerf!System.Performance.DataGenericMapper">
+							<ObjectName>FTP Site</ObjectName>
+							<CounterName>State</CounterName>
+							<InstanceName>$Config/SiteID$</InstanceName>
+							<Value>1</Value>
+						</ConditionDetection>
+						<ConditionDetection ID="StoppedMapper" TypeID="SystemPerf!System.Performance.DataGenericMapper">
+							<ObjectName>FTP Site</ObjectName>
+							<CounterName>State</CounterName>
+							<InstanceName>$Config/SiteID$</InstanceName>
+							<Value>0</Value>
+						</ConditionDetection>
+					</MemberModules>
+					<RegularDetections>
+						<RegularDetection MonitorTypeStateID="Started">
+							<Node ID="StartedMapper">
+								<Node ID="FilterStarted">
+									<Node ID="DS" />
+								</Node>
+							</Node>
+						</RegularDetection>
+						<RegularDetection MonitorTypeStateID="Stopped">
+							<Node ID="StoppedMapper">
+								<Node ID="FilterStopped">
+									<Node ID="DS" />
+								</Node>
+							</Node>
+						</RegularDetection>
+					</RegularDetections>
+				</MonitorImplementation>
+			</UnitMonitorType>
+			<UnitMonitorType ID="Microsoft.Windows.Server.IIS.IISWebSiteStateMonitor.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount">
+				<MonitorTypeStates>
+					<MonitorTypeState ID="Started" NoDetection="false" />
+					<MonitorTypeState ID="Stopped" NoDetection="false" />
+				</MonitorTypeStates>
+				<Configuration>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="SiteID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<MonitorImplementation>
+					<MemberModules>
+						<DataSource ID="DS" TypeID="Microsoft.Windows.Server.IIS.IISStateDataSource.10">
+							<PeriodInSeconds>$Config/PeriodInSeconds$</PeriodInSeconds>
+							<Type>All</Type>
+						</DataSource>
+						<ConditionDetection ID="FilterStarted" TypeID="System!System.ExpressionFilter">
+							<Expression>
+								<SimpleExpression>
+									<ValueExpression>
+										<XPathQuery>Property[@Name='$Config/SiteID$']</XPathQuery>
+									</ValueExpression>
+									<Operator>Equal</Operator>
+									<ValueExpression>
+										<Value>Started</Value>
+									</ValueExpression>
+								</SimpleExpression>
+							</Expression>
+						</ConditionDetection>
+						<ConditionDetection ID="FilterStopped" TypeID="System!System.ExpressionFilter">
+							<Expression>
+								<SimpleExpression>
+									<ValueExpression>
+										<XPathQuery>Property[@Name='$Config/SiteID$']</XPathQuery>
+									</ValueExpression>
+									<Operator>NotEqual</Operator>
+									<ValueExpression>
+										<Value>Started</Value>
+									</ValueExpression>
+								</SimpleExpression>
+							</Expression>
+						</ConditionDetection>
+						<ConditionDetection ID="StartedMapper" TypeID="SystemPerf!System.Performance.DataGenericMapper">
+							<ObjectName>Web Site</ObjectName>
+							<CounterName>State</CounterName>
+							<InstanceName>$Config/SiteID$</InstanceName>
+							<Value>1</Value>
+						</ConditionDetection>
+						<ConditionDetection ID="StoppedMapper" TypeID="SystemPerf!System.Performance.DataGenericMapper">
+							<ObjectName>Web Site</ObjectName>
+							<CounterName>State</CounterName>
+							<InstanceName>$Config/SiteID$</InstanceName>
+							<Value>0</Value>
+						</ConditionDetection>
+					</MemberModules>
+					<RegularDetections>
+						<RegularDetection MonitorTypeStateID="Started">
+							<Node ID="StartedMapper">
+								<Node ID="FilterStarted">
+									<Node ID="DS" />
+								</Node>
+							</Node>
+						</RegularDetection>
+						<RegularDetection MonitorTypeStateID="Stopped">
+							<Node ID="StoppedMapper">
+								<Node ID="FilterStopped">
+									<Node ID="DS" />
+								</Node>
+							</Node>
+						</RegularDetection>
+					</RegularDetections>
+				</MonitorImplementation>
+			</UnitMonitorType>
+		</MonitorTypes>
+	</TypeDefinitions>
+</ManagementPack>

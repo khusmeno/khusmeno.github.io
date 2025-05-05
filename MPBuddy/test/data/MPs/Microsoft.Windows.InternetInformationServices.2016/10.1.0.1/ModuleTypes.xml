@@ -1,0 +1,1311 @@
+<ManagementPack ContentReadable="true" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<TypeDefinitions>
+		<ModuleTypes>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.10.0.Discovery.DataSource" Accessibility="Public" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="RoleCheck" TypeID="Microsoft.Windows.Server.IIS.10.0.RoleCheck.DataSource">
+								<IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
+								<ComputerPrincipalName>$Config/ComputerPrincipalName$</ComputerPrincipalName>
+							</DataSource>
+							<ConditionDetection ID="Mapper" TypeID="System!System.Discovery.ClassSnapshotDataMapper">
+								<ClassId>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.ServerRole"]$</ClassId>
+								<InstanceSettings>
+									<Settings>
+										<Setting>
+											<Name>$MPElement[Name="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Name>
+											<Value>$Config/ComputerPrincipalName$</Value>
+										</Setting>
+										<Setting>
+											<Name>$MPElement[Name="System!System.Entity"]/DisplayName$</Name>
+											<Value>$Config/ComputerPrincipalName$</Value>
+										</Setting>
+									</Settings>
+								</InstanceSettings>
+							</ConditionDetection>
+						</MemberModules>
+						<Composition>
+							<Node ID="Mapper">
+								<Node ID="RoleCheck" />
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.10.0.FTPServer.DiscoveryDataSource" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" maxOccurs="1" name="CheckStartupType" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+					<OverrideableParameter ID="CheckStartupType" Selector="$Config/CheckStartupType$" ParameterType="string" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Discovery.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.10.0.ServiceBased.DiscoveryProbe">
+								<ComputerName>$Config/ComputerName$</ComputerName>
+								<ServiceName>ftpsvc</ServiceName>
+								<CheckStartupType>$Config/CheckStartupType$</CheckStartupType>
+							</ProbeAction>
+							<ConditionDetection ID="Mapper" TypeID="System!System.Discovery.ClassSnapshotDataMapper">
+								<ClassId>$MPElement[Name='Microsoft.Windows.InternetInformationServices.10.0.FTPServer']$</ClassId>
+								<InstanceSettings>
+									<Settings>
+										<Setting>
+											<Name>$MPElement[Name="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Name>
+											<Value>$Config/ComputerName$</Value>
+										</Setting>
+										<Setting>
+											<Name>$MPElement[Name="System!System.Entity"]/DisplayName$</Name>
+											<Value>IIS FTP Server</Value>
+										</Setting>
+									</Settings>
+								</InstanceSettings>
+							</ConditionDetection>
+						</MemberModules>
+						<Composition>
+							<Node ID="Mapper">
+								<Node ID="Probe">
+									<Node ID="Scheduler" />
+								</Node>
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.10.0.RoleCheck.DataSource" Accessibility="Public" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Discovery.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Windows!Microsoft.Windows.RegistryProbe">
+								<ComputerName>$Config/ComputerPrincipalName$</ComputerName>
+								<RegistryAttributeDefinitions>
+									<RegistryAttributeDefinition>
+										<AttributeName>IIS_INSTALLED</AttributeName>
+										<Path>SOFTWARE\MICROSOFT\InetStp\InstallPath</Path>
+										<PathType>1</PathType>
+										<AttributeType>1</AttributeType>
+									</RegistryAttributeDefinition>
+								</RegistryAttributeDefinitions>
+							</ProbeAction>
+							<ConditionDetection ID="Filter" TypeID="System!System.ExpressionFilter">
+								<Expression>
+									<RegExExpression>
+										<ValueExpression>
+											<XPathQuery>Values/IIS_INSTALLED</XPathQuery>
+										</ValueExpression>
+										<Operator>MatchesRegularExpression</Operator>
+										<Pattern>.+</Pattern>
+									</RegExExpression>
+								</Expression>
+							</ConditionDetection>
+						</MemberModules>
+						<Composition>
+							<Node ID="Filter">
+								<Node ID="Probe">
+									<Node ID="Scheduler" />
+								</Node>
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.BaseData</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.10.0.SMTPServer.DiscoveryDataSource" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" maxOccurs="1" name="CheckStartupType" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+					<OverrideableParameter ID="CheckStartupType" Selector="$Config/CheckStartupType$" ParameterType="string" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Discovery.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.10.0.ServiceBased.DiscoveryProbe">
+								<ComputerName>$Config/ComputerName$</ComputerName>
+								<ServiceName>SMTPSVC</ServiceName>
+								<CheckStartupType>$Config/CheckStartupType$</CheckStartupType>
+							</ProbeAction>
+							<ConditionDetection ID="Mapper" TypeID="System!System.Discovery.ClassSnapshotDataMapper">
+								<ClassId>$MPElement[Name='Microsoft.Windows.InternetInformationServices.10.0.LegacySMTPServer']$</ClassId>
+								<InstanceSettings>
+									<Settings>
+										<Setting>
+											<Name>$MPElement[Name="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Name>
+											<Value>$Config/ComputerName$</Value>
+										</Setting>
+										<Setting>
+											<Name>$MPElement[Name="System!System.Entity"]/DisplayName$</Name>
+											<Value>IIS SMTP Server</Value>
+										</Setting>
+									</Settings>
+								</InstanceSettings>
+							</ConditionDetection>
+						</MemberModules>
+						<Composition>
+							<Node ID="Mapper">
+								<Node ID="Probe">
+									<Node ID="Scheduler" />
+								</Node>
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.10.0.WarningAndErrorEventProvider" Accessibility="Internal" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="LogName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="DS" TypeID="Windows!Microsoft.Windows.EventProvider">
+								<ComputerName>$Target/Host/Host/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</ComputerName>
+								<LogName>$Config/LogName$</LogName>
+								<Expression>
+									<Or>
+										<Expression>
+											<SimpleExpression>
+												<ValueExpression>
+													<XPathQuery Type="Integer">EventLevel</XPathQuery>
+												</ValueExpression>
+												<Operator>Equal</Operator>
+												<ValueExpression>
+													<Value Type="Integer">1</Value>
+												</ValueExpression>
+											</SimpleExpression>
+										</Expression>
+										<Expression>
+											<SimpleExpression>
+												<ValueExpression>
+													<XPathQuery Type="Integer">EventLevel</XPathQuery>
+												</ValueExpression>
+												<Operator>Equal</Operator>
+												<ValueExpression>
+													<Value Type="Integer">2</Value>
+												</ValueExpression>
+											</SimpleExpression>
+										</Expression>
+									</Or>
+								</Expression>
+							</DataSource>
+						</MemberModules>
+						<Composition>
+							<Node ID="DS" />
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>Windows!Microsoft.Windows.EventData</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.IISApplicationPoolDiscoveryDataSource.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceType" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceObjectId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceManagedEntityId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="0" maxOccurs="1" name="LowerDiscoveryPercentage" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="0" maxOccurs="1" name="UpperDiscoveryPercentage" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+					<OverrideableParameter ID="LowerDiscoveryPercentage" Selector="$Config/LowerDiscoveryPercentage$" ParameterType="int" />
+					<OverrideableParameter ID="UpperDiscoveryPercentage" Selector="$Config/UpperDiscoveryPercentage$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Discovery.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/PeriodInSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.IISApplicationPoolDiscoveryProbe.10">
+								<DiscoverySourceType>$Config/DiscoverySourceType$</DiscoverySourceType>
+								<DiscoverySourceObjectId>$Config/DiscoverySourceObjectId$</DiscoverySourceObjectId>
+								<DiscoverySourceManagedEntityId>$Config/DiscoverySourceManagedEntityId$</DiscoverySourceManagedEntityId>
+								<ComputerPrincipalName>$Config/ComputerPrincipalName$</ComputerPrincipalName>
+								<GUIDApplicationPool>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool"]$</GUIDApplicationPool>
+								<GUIDApplicationPool__PoolID>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PoolID$</GUIDApplicationPool__PoolID>
+								<GUIDApplicationPool__PeriodicRestartTime>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PeriodicRestartTime$</GUIDApplicationPool__PeriodicRestartTime>
+								<GUIDApplicationPool__PeriodicRestartRequests>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PeriodicRestartRequests$</GUIDApplicationPool__PeriodicRestartRequests>
+								<GUIDApplicationPool__MaxProcesses>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/MaxProcesses$</GUIDApplicationPool__MaxProcesses>
+								<GUIDApplicationPool__PingingEnabled>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PingingEnabled$</GUIDApplicationPool__PingingEnabled>
+								<GUIDApplicationPool__PingInterval>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PingInterval$</GUIDApplicationPool__PingInterval>
+								<GUIDApplicationPool__PingResponseTime>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PingResponseTime$</GUIDApplicationPool__PingResponseTime>
+								<GUIDApplicationPool__IdleTimeout>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/IdleTimeout$</GUIDApplicationPool__IdleTimeout>
+								<GUIDApplicationPool__CPUAction>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/CPUAction$</GUIDApplicationPool__CPUAction>
+								<GUIDApplicationPool__CPULimit>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/CPULimit$</GUIDApplicationPool__CPULimit>
+								<GUIDApplicationPool__CPUResetInterval>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/CPUResetInterval$</GUIDApplicationPool__CPUResetInterval>
+								<GUIDApplicationPool__ApplicationPoolIdentityType>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/ApplicationPoolIdentityType$</GUIDApplicationPool__ApplicationPoolIdentityType>
+								<GUIDApplicationPool__ApplicationPoolIdentity>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/ApplicationPoolIdentity$</GUIDApplicationPool__ApplicationPoolIdentity>
+								<GUIDApplicationPool__PeriodicRestartMemory>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PeriodicRestartMemory$</GUIDApplicationPool__PeriodicRestartMemory>
+								<GUIDApplicationPool__PeriodicRestartPrivateMemory>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PeriodicRestartPrivateMemory$</GUIDApplicationPool__PeriodicRestartPrivateMemory>
+								<GUIDApplicationPool__ApplicationPoolAutoStart>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/ApplicationPoolAutoStart$</GUIDApplicationPool__ApplicationPoolAutoStart>
+								<GUIDApplicationPool__PeriodicRestartSchedule>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PeriodicRestartSchedule$</GUIDApplicationPool__PeriodicRestartSchedule>
+								<GUIDApplicationPool__RapidFailProtection>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/RapidFailProtection$</GUIDApplicationPool__RapidFailProtection>
+								<GUIDApplicationPool__RapidFailProtectionInterval>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/RapidFailProtectionInterval$</GUIDApplicationPool__RapidFailProtectionInterval>
+								<GUIDApplicationPool__RapidFailProtectionMaxCrashes>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/RapidFailProtectionMaxCrashes$</GUIDApplicationPool__RapidFailProtectionMaxCrashes>
+								<GUIDApplicationPool__DotNetVersion>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool"]/DotNetVersion$</GUIDApplicationPool__DotNetVersion>
+								<GUIDApplicationPool__QueueLength>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool"]/QueueLength$</GUIDApplicationPool__QueueLength>
+								<GUIDApplicationPool__Enable32BitApplications>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool"]/Enable32BitApplications$</GUIDApplicationPool__Enable32BitApplications>
+								<LowerDiscoveryPercentage>$Config/LowerDiscoveryPercentage$</LowerDiscoveryPercentage>
+								<UpperDiscoveryPercentage>$Config/UpperDiscoveryPercentage$</UpperDiscoveryPercentage>
+							</ProbeAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="Probe">
+								<Node ID="Scheduler" />
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.IISAspDiscoveryDataSource.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceType" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceObjectId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceManagedEntityId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="0" maxOccurs="1" name="LowerDiscoveryPercentage" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="0" maxOccurs="1" name="UpperDiscoveryPercentage" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+					<OverrideableParameter ID="LowerDiscoveryPercentage" Selector="$Config/LowerDiscoveryPercentage$" ParameterType="int" />
+					<OverrideableParameter ID="UpperDiscoveryPercentage" Selector="$Config/UpperDiscoveryPercentage$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Discovery.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/PeriodInSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.IISAspDiscoveryProbe.10">
+								<DiscoverySourceType>$Config/DiscoverySourceType$</DiscoverySourceType>
+								<DiscoverySourceObjectId>$Config/DiscoverySourceObjectId$</DiscoverySourceObjectId>
+								<DiscoverySourceManagedEntityId>$Config/DiscoverySourceManagedEntityId$</DiscoverySourceManagedEntityId>
+								<ComputerPrincipalName>$Config/ComputerPrincipalName$</ComputerPrincipalName>
+								<GUIDAspApplication>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.AspNetWebApplicationEndpoint"]$</GUIDAspApplication>
+								<GUIDAspApplication__ApplicationVRoot>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.AspNetWebApplicationEndpoint"]/ApplicationVRoot$</GUIDAspApplication__ApplicationVRoot>
+								<GUIDAspApplication__IISApplicationName>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.AspNetWebApplicationEndpoint"]/IISApplicationName$</GUIDAspApplication__IISApplicationName>
+								<GUIDAspApplication__Name>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.AspNetWebApplicationEndpoint"]/Name$</GUIDAspApplication__Name>
+								<GUIDWebServiceApplication>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.AspNetWebServiceEndpoint"]$</GUIDWebServiceApplication>
+								<GUIDWebServiceApplication__ApplicationVRoot>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.AspNetWebServiceEndpoint"]/ApplicationVRoot$</GUIDWebServiceApplication__ApplicationVRoot>
+								<GUIDWebServiceApplication__IISApplicationName>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.AspNetWebServiceEndpoint"]/IISApplicationName$</GUIDWebServiceApplication__IISApplicationName>
+								<GUIDWebServiceApplication__Name>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.AspNetWebServiceEndpoint"]/Name$</GUIDWebServiceApplication__Name>
+								<GUIDWebSite>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]$</GUIDWebSite>
+								<GUIDWebSite__SiteID>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/SiteID$</GUIDWebSite__SiteID>
+								<LowerDiscoveryPercentage>$Config/LowerDiscoveryPercentage$</LowerDiscoveryPercentage>
+								<UpperDiscoveryPercentage>$Config/UpperDiscoveryPercentage$</UpperDiscoveryPercentage>
+							</ProbeAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="Probe">
+								<Node ID="Scheduler" />
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.IISFTPSiteDiscoveryDataSource.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceType" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceObjectId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceManagedEntityId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="0" maxOccurs="1" name="LowerDiscoveryPercentage" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="0" maxOccurs="1" name="UpperDiscoveryPercentage" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+					<OverrideableParameter ID="LowerDiscoveryPercentage" Selector="$Config/LowerDiscoveryPercentage$" ParameterType="int" />
+					<OverrideableParameter ID="UpperDiscoveryPercentage" Selector="$Config/UpperDiscoveryPercentage$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Discovery.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/PeriodInSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.IISFTPSiteDiscoveryProbe.10">
+								<DiscoverySourceType>$Config/DiscoverySourceType$</DiscoverySourceType>
+								<DiscoverySourceObjectId>$Config/DiscoverySourceObjectId$</DiscoverySourceObjectId>
+								<DiscoverySourceManagedEntityId>$Config/DiscoverySourceManagedEntityId$</DiscoverySourceManagedEntityId>
+								<ComputerPrincipalName>$Config/ComputerPrincipalName$</ComputerPrincipalName>
+								<GUIDFTPSite>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.FTPSite"]$</GUIDFTPSite>
+								<GUIDFTPSite__SiteID>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/SiteID$</GUIDFTPSite__SiteID>
+								<GUIDFTPSite__Description>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/Description$</GUIDFTPSite__Description>
+								<GUIDFTPSite__ServerBindings>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/ServerBindings$</GUIDFTPSite__ServerBindings>
+								<GUIDFTPSite__SecureBindings>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/SecureBindings$</GUIDFTPSite__SecureBindings>
+								<GUIDFTPSite__AllowAnonymous>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/AllowAnonymous$</GUIDFTPSite__AllowAnonymous>
+								<GUIDFTPSite__AnonymousOnly>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/AnonymousOnly$</GUIDFTPSite__AnonymousOnly>
+								<GUIDFTPSite__AnonymousUsername>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/AnonymousUsername$</GUIDFTPSite__AnonymousUsername>
+								<GUIDFTPSite__LogFileDirectory>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/LogFileDirectory$</GUIDFTPSite__LogFileDirectory>
+								<GUIDFTPSite__Path>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/Path$</GUIDFTPSite__Path>
+								<GUIDFTPSite__ConnectionTimeout>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/ConnectionTimeout$</GUIDFTPSite__ConnectionTimeout>
+								<GUIDFTPSite__MaxConnections>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/MaxConnections$</GUIDFTPSite__MaxConnections>
+								<GUIDFTPSite__LogType>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/LogType$</GUIDFTPSite__LogType>
+								<GUIDFTPSite__URL>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/URL$</GUIDFTPSite__URL>
+								<GUIDFTPSite__LogFileType>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/LogFileType$</GUIDFTPSite__LogFileType>
+								<GUIDFTPSite__LogFilePattern>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/LogFilePattern$</GUIDFTPSite__LogFilePattern>
+								<GUIDFTPSite__LoggingEnabled>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/LoggingEnabled$</GUIDFTPSite__LoggingEnabled>
+								<GUIDFTPSite__PerfCounterInstance>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.FTPSite"]/PerfCounterInstance$</GUIDFTPSite__PerfCounterInstance>
+								<GUIDFTPSite__ID>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.FTPSite"]/ID$</GUIDFTPSite__ID>
+								<LowerDiscoveryPercentage>$Config/LowerDiscoveryPercentage$</LowerDiscoveryPercentage>
+								<UpperDiscoveryPercentage>$Config/UpperDiscoveryPercentage$</UpperDiscoveryPercentage>
+							</ProbeAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="Probe">
+								<Node ID="Scheduler" />
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.IISLegacySMTPDiscoveryDataSource.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceType" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceObjectId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceManagedEntityId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="DS" TypeID="IISCommon!Microsoft.Windows.Server.IIS.IISDiscoveryDataSource">
+								<PeriodInSeconds>$Config/PeriodInSeconds$</PeriodInSeconds>
+								<DiscoverySourceType>$Config/DiscoverySourceType$</DiscoverySourceType>
+								<DiscoverySourceObjectId>$Config/DiscoverySourceObjectId$</DiscoverySourceObjectId>
+								<DiscoverySourceManagedEntityId>$Config/DiscoverySourceManagedEntityId$</DiscoverySourceManagedEntityId>
+								<ComputerPrincipalName>$Config/ComputerPrincipalName$</ComputerPrincipalName>
+								<GUIDFTPServer>{00000000-0000-0000-0000-000000000000}</GUIDFTPServer>
+								<GUIDFTPSite>{00000000-0000-0000-0000-000000000000}</GUIDFTPSite>
+								<GUIDNNTPServer>{00000000-0000-0000-0000-000000000000}</GUIDNNTPServer>
+								<GUIDNNTPVirtualServer>{00000000-0000-0000-0000-000000000000}</GUIDNNTPVirtualServer>
+								<GUIDIISServerRole>{00000000-0000-0000-0000-000000000000}</GUIDIISServerRole>
+								<GUIDSMTPServer>{00000000-0000-0000-0000-000000000000}</GUIDSMTPServer>
+								<GUIDSMTPVirtualServer>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.LegacySMTPVirtualServer"]$</GUIDSMTPVirtualServer>
+								<GUIDWebServer>{00000000-0000-0000-0000-000000000000}</GUIDWebServer>
+								<GUIDWebSite>{00000000-0000-0000-0000-000000000000}</GUIDWebSite>
+								<GUIDWebSite__ApplicationPoolName>{00000000-0000-0000-0000-000000000000}</GUIDWebSite__ApplicationPoolName>
+								<GUIDWebSite__ApplicationPoolID>{00000000-0000-0000-0000-000000000000}</GUIDWebSite__ApplicationPoolID>
+								<GUIDApplicationPool>{00000000-0000-0000-0000-000000000000}</GUIDApplicationPool>
+								<GUIDAspApplication>{00000000-0000-0000-0000-000000000000}</GUIDAspApplication>
+								<GUIDAspApplication__ApplicationVRoot>{00000000-0000-0000-0000-000000000000}</GUIDAspApplication__ApplicationVRoot>
+								<GUIDAspApplication__IISApplicationName>{00000000-0000-0000-0000-000000000000}</GUIDAspApplication__IISApplicationName>
+								<GUIDAspApplication__Name>{00000000-0000-0000-0000-000000000000}</GUIDAspApplication__Name>
+								<GUIDWebServiceApplication>{00000000-0000-0000-0000-000000000000}</GUIDWebServiceApplication>
+								<GUIDWebServiceApplication__ApplicationVRoot>{00000000-0000-0000-0000-000000000000}</GUIDWebServiceApplication__ApplicationVRoot>
+								<GUIDWebServiceApplication__IISApplicationName>{00000000-0000-0000-0000-000000000000}</GUIDWebServiceApplication__IISApplicationName>
+								<GUIDWebServiceApplication__Name>{00000000-0000-0000-0000-000000000000}</GUIDWebServiceApplication__Name>
+								<GUIDWebSiteReferencesApplicationPool>{00000000-0000-0000-0000-000000000000}</GUIDWebSiteReferencesApplicationPool>
+								<DiscoveryType>32</DiscoveryType>
+								<LowerDiscoveryPercentage>0</LowerDiscoveryPercentage>
+								<UpperDiscoveryPercentage>100</UpperDiscoveryPercentage>
+							</DataSource>
+						</MemberModules>
+						<Composition>
+							<Node ID="DS" />
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.IISLegacyStateDataSource.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="Type" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/PeriodInSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.IISLegacyStateProbe.10">
+								<Type>$Config/Type$</Type>
+							</ProbeAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="Probe">
+								<Node ID="Scheduler" />
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.PropertyBagData</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.IISStateDataSource.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="Type" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="WebSites" />
+								<xsd:enumeration value="FTPSites" />
+								<xsd:enumeration value="AppPools" />
+								<xsd:enumeration value="All" />
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/PeriodInSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.IISStateProbe.10">
+								<Type>$Config/Type$</Type>
+							</ProbeAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="Probe">
+								<Node ID="Scheduler" />
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.PropertyBagData</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.Server.IIS.IISWebSiteDiscoveryDataSource.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="PeriodInSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceType" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceObjectId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="DiscoverySourceManagedEntityId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="0" maxOccurs="1" name="LowerDiscoveryPercentage" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="0" maxOccurs="1" name="UpperDiscoveryPercentage" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="PeriodInSeconds" Selector="$Config/PeriodInSeconds$" ParameterType="int" />
+					<OverrideableParameter ID="LowerDiscoveryPercentage" Selector="$Config/LowerDiscoveryPercentage$" ParameterType="int" />
+					<OverrideableParameter ID="UpperDiscoveryPercentage" Selector="$Config/UpperDiscoveryPercentage$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Discovery.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/PeriodInSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.IISWebSiteDiscoveryProbe.10">
+								<DiscoverySourceType>$Config/DiscoverySourceType$</DiscoverySourceType>
+								<DiscoverySourceObjectId>$Config/DiscoverySourceObjectId$</DiscoverySourceObjectId>
+								<DiscoverySourceManagedEntityId>$Config/DiscoverySourceManagedEntityId$</DiscoverySourceManagedEntityId>
+								<ComputerPrincipalName>$Config/ComputerPrincipalName$</ComputerPrincipalName>
+								<GUIDWebServer>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebServer"]$</GUIDWebServer>
+								<GUIDWebServer__IIS5IsolationMode>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebServer"]/IIS5IsolationMode$</GUIDWebServer__IIS5IsolationMode>
+								<GUIDWebServer__LogIsUTF8>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebServer"]/LogIsUTF8$</GUIDWebServer__LogIsUTF8>
+								<GUIDWebSite>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]$</GUIDWebSite>
+								<GUIDWebSite__SiteID>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/SiteID$</GUIDWebSite__SiteID>
+								<GUIDWebSite__Description>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/Description$</GUIDWebSite__Description>
+								<GUIDWebSite__ServerBindings>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/ServerBindings$</GUIDWebSite__ServerBindings>
+								<GUIDWebSite__SecureBindings>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/SecureBindings$</GUIDWebSite__SecureBindings>
+								<GUIDWebSite__Path>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/Path$</GUIDWebSite__Path>
+								<GUIDWebSite__LogFileDirectory>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/LogFileDirectory$</GUIDWebSite__LogFileDirectory>
+								<GUIDWebSite__LogFileType>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/LogFileType$</GUIDWebSite__LogFileType>
+								<GUIDWebSite__BITS>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/BITS$</GUIDWebSite__BITS>
+								<GUIDWebSite__LogFilePattern>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/LogFilePattern$</GUIDWebSite__LogFilePattern>
+								<GUIDWebSite__LoggingEnabled>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/LoggingEnabled$</GUIDWebSite__LoggingEnabled>
+								<GUIDWebSite__AnonymousUsername>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/AnonymousUsername$</GUIDWebSite__AnonymousUsername>
+								<GUIDWebSite__CacheISAPI>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/CacheISAPI$</GUIDWebSite__CacheISAPI>
+								<GUIDWebSite__AllowKeepAlive>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/AllowKeepAlive$</GUIDWebSite__AllowKeepAlive>
+								<GUIDWebSite__URL>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/URL$</GUIDWebSite__URL>
+								<GUIDWebSite__PerfCounterInstance>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/PerfCounterInstance$</GUIDWebSite__PerfCounterInstance>
+								<GUIDWebSite__ApplicationPoolName>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/ApplicationPoolName$</GUIDWebSite__ApplicationPoolName>
+								<GUIDWebSite__FailedRequestTracingEnabled>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/FailedRequestTracingEnabled$</GUIDWebSite__FailedRequestTracingEnabled>
+								<GUIDWebSite__FailedRequestTracingDirectory>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/FailedRequestTracingDirectory$</GUIDWebSite__FailedRequestTracingDirectory>
+								<GUIDWebSite__StartAutomatically>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/StartAutomatically$</GUIDWebSite__StartAutomatically>
+								<GUIDWebSite__ConnectionTimeout>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/ConnectionTimeout$</GUIDWebSite__ConnectionTimeout>
+								<GUIDWebSite__MaxConnections>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/MaxConnections$</GUIDWebSite__MaxConnections>
+								<GUIDWebSite__MaximumBandwidth>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/MaximumBandwidth$</GUIDWebSite__MaximumBandwidth>
+								<GUIDWebSite__ID>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/ID$</GUIDWebSite__ID>
+								<GUIDApplicationPool>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool"]$</GUIDApplicationPool>
+								<GUIDApplicationPool__PoolID>$MPElement[Name="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PoolID$</GUIDApplicationPool__PoolID>
+								<GUIDWebSiteReferencesApplicationPool>$MPElement[Name="Microsoft.Windows.InternetInformationServices.10.0.WebSite.Contains.Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool"]$</GUIDWebSiteReferencesApplicationPool>
+								<LowerDiscoveryPercentage>$Config/LowerDiscoveryPercentage$</LowerDiscoveryPercentage>
+								<UpperDiscoveryPercentage>$Config/UpperDiscoveryPercentage$</UpperDiscoveryPercentage>
+							</ProbeAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="Probe">
+								<Node ID="Scheduler" />
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.InternetInformationServices.10.0.WMService.DiscoveryDataSource" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" maxOccurs="1" name="CheckStartupType" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+					<OverrideableParameter ID="CheckStartupType" Selector="$Config/CheckStartupType$" ParameterType="string" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Discovery.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.10.0.ServiceBased.DiscoveryProbe">
+								<ComputerName>$Config/ComputerName$</ComputerName>
+								<ServiceName>WMSVC</ServiceName>
+								<CheckStartupType>$Config/CheckStartupType$</CheckStartupType>
+							</ProbeAction>
+							<ConditionDetection ID="Mapper" TypeID="System!System.Discovery.ClassSnapshotDataMapper">
+								<ClassId>$MPElement[Name='Microsoft.Windows.InternetInformationServices.10.0.WMService']$</ClassId>
+								<InstanceSettings>
+									<Settings>
+										<Setting>
+											<Name>$MPElement[Name="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Name>
+											<Value>$Config/ComputerName$</Value>
+										</Setting>
+										<Setting>
+											<Name>$MPElement[Name="System!System.Entity"]/DisplayName$</Name>
+											<Value>IIS WMSVC Service</Value>
+										</Setting>
+									</Settings>
+								</InstanceSettings>
+							</ConditionDetection>
+						</MemberModules>
+						<Composition>
+							<Node ID="Mapper">
+								<Node ID="Probe">
+									<Node ID="Scheduler" />
+								</Node>
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+			</DataSourceModuleType>
+			<DataSourceModuleType ID="Microsoft.Windows.InternetInformationServices.10.0.IISAdminService.DiscoveryDataSource" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ComputerName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" maxOccurs="1" name="CheckStartupType" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+					<OverrideableParameter ID="CheckStartupType" Selector="$Config/CheckStartupType$" ParameterType="string" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<DataSource ID="Scheduler" TypeID="System!System.Discovery.Scheduler">
+								<Scheduler>
+									<SimpleReccuringSchedule>
+										<Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+									</SimpleReccuringSchedule>
+									<ExcludeDates />
+								</Scheduler>
+							</DataSource>
+							<ProbeAction ID="Probe" TypeID="Microsoft.Windows.Server.IIS.10.0.ServiceBased.DiscoveryProbe">
+								<ComputerName>$Config/ComputerName$</ComputerName>
+								<ServiceName>IISAdmin</ServiceName>
+								<CheckStartupType>$Config/CheckStartupType$</CheckStartupType>
+							</ProbeAction>
+							<ConditionDetection ID="Mapper" TypeID="System!System.Discovery.ClassSnapshotDataMapper">
+								<ClassId>$MPElement[Name='Microsoft.Windows.InternetInformationServices.10.0.IISAdminService']$</ClassId>
+								<InstanceSettings>
+									<Settings>
+										<Setting>
+											<Name>$MPElement[Name="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Name>
+											<Value>$Config/ComputerName$</Value>
+										</Setting>
+										<Setting>
+											<Name>$MPElement[Name="System!System.Entity"]/DisplayName$</Name>
+											<Value>IIS Admin Service</Value>
+										</Setting>
+									</Settings>
+								</InstanceSettings>
+							</ConditionDetection>
+						</MemberModules>
+						<Composition>
+							<Node ID="Mapper">
+								<Node ID="Probe">
+									<Node ID="Scheduler" />
+								</Node>
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+			</DataSourceModuleType>
+			<ProbeActionModuleType ID="Microsoft.Windows.InternetInformationServices.10.0.AppCmd.ProbeAction" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false" PassThrough="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="Operation" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<ProbeAction ID="Probe" TypeID="System!System.CommandExecuterProbe">
+								<ApplicationName>%WINDIR%\SYSTEM32\INETSRV\APPCMD.EXE</ApplicationName>
+								<WorkingDirectory>%windir%\system32\inetsrv</WorkingDirectory>
+								<CommandLine>$Config/Operation$</CommandLine>
+								<TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+								<RequireOutput>true</RequireOutput>
+							</ProbeAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="Probe" />
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.CommandOutput</OutputType>
+				<InputType>System!System.BaseData</InputType>
+			</ProbeActionModuleType>
+			<ProbeActionModuleType ID="Microsoft.Windows.InternetInformationServices.10.0.GetIISServicesStatus" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false" PassThrough="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<ProbeAction ID="Probe" TypeID="System!System.CommandExecuterProbe">
+								<ApplicationName>%WINDIR%\SYSTEM32\IISRESET.EXE</ApplicationName>
+								<WorkingDirectory>%windir%\system32</WorkingDirectory>
+								<CommandLine>/STATUS</CommandLine>
+								<TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+								<RequireOutput>true</RequireOutput>
+							</ProbeAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="Probe" />
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.CommandOutput</OutputType>
+				<InputType>System!System.BaseData</InputType>
+			</ProbeActionModuleType>
+			<ProbeActionModuleType ID="Microsoft.Windows.Server.IIS.10.0.ServiceBased.DiscoveryProbe" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false" PassThrough="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="ComputerName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="ServiceName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" maxOccurs="1" name="CheckStartupType" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="CheckStartupType" Selector="$Config/CheckStartupType$" ParameterType="string" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<ProbeAction ID="Probe" TypeID="Windows!Microsoft.Windows.ExistingWin32ServiceInformationProbe">
+								<ComputerName>$Config/ComputerName$</ComputerName>
+								<ServiceName>$Config/ServiceName$</ServiceName>
+							</ProbeAction>
+							<ConditionDetection ID="CD" TypeID="System!System.ExpressionFilter">
+								<Expression>
+									<Or>
+										<Expression>
+											<And>
+												<Expression>
+													<SimpleExpression>
+														<ValueExpression>
+															<XPathQuery Type="Integer">Property[@Name='StartMode']</XPathQuery>
+														</ValueExpression>
+														<Operator>Equal</Operator>
+														<ValueExpression>
+															<Value Type="Integer">2</Value>
+														</ValueExpression>
+													</SimpleExpression>
+												</Expression>
+												<Expression>
+													<SimpleExpression>
+														<ValueExpression>
+															<XPathQuery Type="Integer">Property[@Name='State']</XPathQuery>
+														</ValueExpression>
+														<Operator>NotEqual</Operator>
+														<ValueExpression>
+															<Value Type="Integer">8</Value>
+														</ValueExpression>
+													</SimpleExpression>
+												</Expression>
+											</And>
+										</Expression>
+										<Expression>
+											<And>
+												<Expression>
+													<SimpleExpression>
+														<ValueExpression>
+															<Value Type="String">$Config/CheckStartupType$</Value>
+														</ValueExpression>
+														<Operator>Equal</Operator>
+														<ValueExpression>
+															<Value Type="String">false</Value>
+														</ValueExpression>
+													</SimpleExpression>
+												</Expression>
+												<Expression>
+													<SimpleExpression>
+														<ValueExpression>
+															<XPathQuery Type="Integer">Property[@Name='State']</XPathQuery>
+														</ValueExpression>
+														<Operator>NotEqual</Operator>
+														<ValueExpression>
+															<Value Type="Integer">8</Value>
+														</ValueExpression>
+													</SimpleExpression>
+												</Expression>
+											</And>
+										</Expression>
+									</Or>
+								</Expression>
+							</ConditionDetection>
+						</MemberModules>
+						<Composition>
+							<Node ID="CD">
+								<Node ID="Probe" />
+							</Node>
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>System!System.PropertyBagData</OutputType>
+				<InputType>System!System.BaseData</InputType>
+			</ProbeActionModuleType>
+			<ProbeActionModuleType ID="Microsoft.Windows.Server.IIS.IISApplicationPoolDiscoveryProbe.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false" PassThrough="false">
+				<Configuration>
+					<xsd:element name="DiscoverySourceType" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="DiscoverySourceObjectId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="DiscoverySourceManagedEntityId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool" minOccurs="0" maxOccurs="1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__PoolID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__PeriodicRestartTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__PeriodicRestartRequests" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__MaxProcesses" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__PingingEnabled" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__PingInterval" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__PingResponseTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__IdleTimeout" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__CPUAction" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__CPULimit" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__CPUResetInterval" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__ApplicationPoolIdentityType" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__ApplicationPoolIdentity" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__PeriodicRestartMemory" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__PeriodicRestartPrivateMemory" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__ApplicationPoolAutoStart" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__PeriodicRestartSchedule" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__RapidFailProtection" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__RapidFailProtectionInterval" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__RapidFailProtectionMaxCrashes" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__DotNetVersion" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__QueueLength" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__Enable32BitApplications" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="LowerDiscoveryPercentage" minOccurs="0" maxOccurs="1" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="UpperDiscoveryPercentage" minOccurs="0" maxOccurs="1" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<ModuleImplementation Isolation="Any">
+					<Native>
+						<ClassID>A9348597-CAFD-4E57-9A20-2BCC4E3ED9CB</ClassID>
+					</Native>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+				<InputType>System!System.BaseData</InputType>
+			</ProbeActionModuleType>
+			<ProbeActionModuleType ID="Microsoft.Windows.Server.IIS.IISAspDiscoveryProbe.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false" PassThrough="false">
+				<Configuration>
+					<xsd:element name="DiscoverySourceType" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="DiscoverySourceObjectId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="DiscoverySourceManagedEntityId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDAspApplication" minOccurs="0" maxOccurs="1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDAspApplication__ApplicationVRoot" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDAspApplication__IISApplicationName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDAspApplication__Name" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebServiceApplication" minOccurs="0" maxOccurs="1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebServiceApplication__ApplicationVRoot" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebServiceApplication__IISApplicationName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebServiceApplication__Name" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__SiteID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="LowerDiscoveryPercentage" minOccurs="0" maxOccurs="1" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="UpperDiscoveryPercentage" minOccurs="0" maxOccurs="1" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<ModuleImplementation Isolation="Any">
+					<Native>
+						<ClassID>9184E8F9-6C50-47D7-987C-7CE31AD115A9</ClassID>
+					</Native>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+				<InputType>System!System.BaseData</InputType>
+			</ProbeActionModuleType>
+			<ProbeActionModuleType ID="Microsoft.Windows.Server.IIS.IISFTPSiteDiscoveryProbe.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false" PassThrough="false">
+				<Configuration>
+					<xsd:element name="DiscoverySourceType" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="DiscoverySourceObjectId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="DiscoverySourceManagedEntityId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__SiteID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__Description" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__ServerBindings" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__SecureBindings" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__AllowAnonymous" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__AnonymousOnly" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__AnonymousUsername" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__LogFileDirectory" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__Path" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__ConnectionTimeout" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__MaxConnections" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__LogType" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__URL" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__LogFileType" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__LogFilePattern" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__LoggingEnabled" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__PerfCounterInstance" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDFTPSite__ID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="LowerDiscoveryPercentage" minOccurs="0" maxOccurs="1" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="UpperDiscoveryPercentage" minOccurs="0" maxOccurs="1" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<ModuleImplementation Isolation="Any">
+					<Native>
+						<ClassID>8D61C900-109A-4320-9F90-B6312DFF59F0</ClassID>
+					</Native>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+				<InputType>System!System.BaseData</InputType>
+			</ProbeActionModuleType>
+			<ProbeActionModuleType ID="Microsoft.Windows.Server.IIS.IISLegacyStateProbe.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false" PassThrough="false">
+				<Configuration>
+					<xsd:element name="Type" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<ModuleImplementation Isolation="Any">
+					<Native>
+						<ClassID>4A8BA0EA-AFE0-46A6-937D-FCE887B455D9</ClassID>
+					</Native>
+				</ModuleImplementation>
+				<OutputType>System!System.PropertyBagData</OutputType>
+				<TriggerOnly>true</TriggerOnly>
+			</ProbeActionModuleType>
+			<ProbeActionModuleType ID="Microsoft.Windows.Server.IIS.IISStateProbe.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false" PassThrough="false">
+				<Configuration>
+					<xsd:element name="Type" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="WebSites" />
+								<xsd:enumeration value="FTPSites" />
+								<xsd:enumeration value="AppPools" />
+								<xsd:enumeration value="All" />
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:element>
+				</Configuration>
+				<ModuleImplementation Isolation="Any">
+					<Native>
+						<ClassID>29D0D61F-7540-4937-97D9-D991E3E79513</ClassID>
+					</Native>
+				</ModuleImplementation>
+				<OutputType>System!System.PropertyBagData</OutputType>
+				<TriggerOnly>true</TriggerOnly>
+			</ProbeActionModuleType>
+			<ProbeActionModuleType ID="Microsoft.Windows.Server.IIS.IISWebSiteDiscoveryProbe.10" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false" PassThrough="false">
+				<Configuration>
+					<xsd:element name="DiscoverySourceType" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="DiscoverySourceObjectId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="DiscoverySourceManagedEntityId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="ComputerPrincipalName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebServer" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebServer__IIS5IsolationMode" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebServer__LogIsUTF8" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__SiteID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__Description" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__ServerBindings" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__SecureBindings" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__Path" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__LogFileDirectory" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__LogFileType" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__BITS" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__LogFilePattern" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__LoggingEnabled" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__AnonymousUsername" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__CacheISAPI" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__AllowKeepAlive" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__URL" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__PerfCounterInstance" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__ApplicationPoolName" minOccurs="0" maxOccurs="1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__FailedRequestTracingEnabled" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__FailedRequestTracingDirectory" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__StartAutomatically" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__ConnectionTimeout" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__MaxConnections" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__MaximumBandwidth" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSite__ID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDApplicationPool__PoolID" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="GUIDWebSiteReferencesApplicationPool" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="LowerDiscoveryPercentage" minOccurs="0" maxOccurs="1" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="UpperDiscoveryPercentage" minOccurs="0" maxOccurs="1" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<ModuleImplementation Isolation="Any">
+					<Native>
+						<ClassID>64D5DB86-322D-4A18-AAA9-4BFE063624A5</ClassID>
+					</Native>
+				</ModuleImplementation>
+				<OutputType>System!System.Discovery.Data</OutputType>
+				<InputType>System!System.BaseData</InputType>
+			</ProbeActionModuleType>
+			<ConditionDetectionModuleType ID="Microsoft.Windows.InternetInformationServices.10.0.ApplicationPool.EventFilter" Accessibility="Internal" Batching="false" Stateful="false" PassThrough="false">
+				<Configuration>
+					<IncludeSchemaTypes>
+						<SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+					</IncludeSchemaTypes>
+					<xsd:element name="Expression" type="ExpressionType" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<ConditionDetection ID="Filter" TypeID="System!System.ExpressionFilter">
+								<Expression>
+									<And>
+										<Expression>
+											<SimpleExpression>
+												<ValueExpression>
+													<XPathQuery Type="String">Params/Param[1]</XPathQuery>
+												</ValueExpression>
+												<Operator>Equal</Operator>
+												<ValueExpression>
+													<Value Type="String">$Target/Property[Type="IISCommon!Microsoft.Windows.InternetInformationServices.ApplicationPool"]/PoolID$</Value>
+												</ValueExpression>
+											</SimpleExpression>
+										</Expression>
+										<Expression>$Config/Expression$</Expression>
+									</And>
+								</Expression>
+							</ConditionDetection>
+						</MemberModules>
+						<Composition>
+							<Node ID="Filter" />
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>Windows!Microsoft.Windows.EventData</OutputType>
+				<InputTypes>
+					<InputType>Windows!Microsoft.Windows.EventData</InputType>
+				</InputTypes>
+			</ConditionDetectionModuleType>
+			<ConditionDetectionModuleType ID="Microsoft.Windows.InternetInformationServices.10.0.WebSite.EventFilter" Accessibility="Internal" Batching="false" Stateful="false" PassThrough="false">
+				<Configuration>
+					<IncludeSchemaTypes>
+						<SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+					</IncludeSchemaTypes>
+					<xsd:element minOccurs="1" name="Expression" type="ExpressionType" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<ConditionDetection ID="Filter" TypeID="System!System.ExpressionFilter">
+								<Expression>
+									<And>
+										<Expression>
+											<Or>
+												<Expression>
+													<SimpleExpression>
+														<ValueExpression>
+															<XPathQuery Type="String">Params/Param[1]</XPathQuery>
+														</ValueExpression>
+														<Operator>Equal</Operator>
+														<ValueExpression>
+															<Value Type="String">$Target/Property[Type="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/SiteID$</Value>
+														</ValueExpression>
+													</SimpleExpression>
+												</Expression>
+												<Expression>
+													<SimpleExpression>
+														<ValueExpression>
+															<XPathQuery Type="String">Params/Param[1]</XPathQuery>
+														</ValueExpression>
+														<Operator>Equal</Operator>
+														<ValueExpression>
+															<Value Type="String">$Target/Property[Type="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/ID$</Value>
+														</ValueExpression>
+													</SimpleExpression>
+												</Expression>
+												<Expression>
+													<SimpleExpression>
+														<ValueExpression>
+															<XPathQuery Type="String">Params/Param[2]</XPathQuery>
+														</ValueExpression>
+														<Operator>Equal</Operator>
+														<ValueExpression>
+															<Value Type="String">$Target/Property[Type="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/SiteID$</Value>
+														</ValueExpression>
+													</SimpleExpression>
+												</Expression>
+												<Expression>
+													<SimpleExpression>
+														<ValueExpression>
+															<XPathQuery Type="String">Params/Param[2]</XPathQuery>
+														</ValueExpression>
+														<Operator>Equal</Operator>
+														<ValueExpression>
+															<Value Type="String">$Target/Property[Type="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/ID$</Value>
+														</ValueExpression>
+													</SimpleExpression>
+												</Expression>
+												<Expression>
+													<SimpleExpression>
+														<ValueExpression>
+															<XPathQuery Type="String">Params/Param[3]</XPathQuery>
+														</ValueExpression>
+														<Operator>Equal</Operator>
+														<ValueExpression>
+															<Value Type="String">$Target/Property[Type="IISCommon!Microsoft.Windows.InternetInformationServices.WebSite"]/SiteID$</Value>
+														</ValueExpression>
+													</SimpleExpression>
+												</Expression>
+												<Expression>
+													<SimpleExpression>
+														<ValueExpression>
+															<XPathQuery Type="String">Params/Param[3]</XPathQuery>
+														</ValueExpression>
+														<Operator>Equal</Operator>
+														<ValueExpression>
+															<Value Type="String">$Target/Property[Type="Microsoft.Windows.InternetInformationServices.10.0.WebSite"]/ID$</Value>
+														</ValueExpression>
+													</SimpleExpression>
+												</Expression>
+											</Or>
+										</Expression>
+										<Expression>$Config/Expression$</Expression>
+									</And>
+								</Expression>
+							</ConditionDetection>
+						</MemberModules>
+						<Composition>
+							<Node ID="Filter" />
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<OutputType>Windows!Microsoft.Windows.EventData</OutputType>
+				<InputTypes>
+					<InputType>Windows!Microsoft.Windows.EventData</InputType>
+				</InputTypes>
+			</ConditionDetectionModuleType>
+			<WriteActionModuleType ID="Microsoft.Windows.InternetInformationServices.10.0.AppCmd.WriteAction" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="Operation" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<WriteAction ID="WA" TypeID="System!System.CommandExecuter">
+								<ApplicationName>%WINDIR%\SYSTEM32\INETSRV\APPCMD.EXE</ApplicationName>
+								<WorkingDirectory>%windir%\system32\inetsrv</WorkingDirectory>
+								<CommandLine>$Config/Operation$</CommandLine>
+								<TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+								<RequireOutput>true</RequireOutput>
+							</WriteAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="WA" />
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<InputType>System!System.BaseData</InputType>
+			</WriteActionModuleType>
+			<WriteActionModuleType ID="Microsoft.Windows.InternetInformationServices.10.0.ControlService" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="Operation" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<WriteAction ID="WA" TypeID="System!System.CommandExecuter">
+								<ApplicationName>%WINDIR%\SYSTEM32\NET.EXE</ApplicationName>
+								<WorkingDirectory>%windir%\system32</WorkingDirectory>
+								<CommandLine>$Config/Operation$</CommandLine>
+								<TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+								<RequireOutput>true</RequireOutput>
+							</WriteAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="WA" />
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<InputType>System!System.BaseData</InputType>
+			</WriteActionModuleType>
+			<WriteActionModuleType ID="Microsoft.Windows.InternetInformationServices.10.0.IISReset" Accessibility="Internal" RunAs="System!System.PrivilegedMonitoringAccount" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="Operation" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<WriteAction ID="WA" TypeID="System!System.CommandExecuter">
+								<ApplicationName>%WINDIR%\SYSTEM32\IISRESET.EXE</ApplicationName>
+								<WorkingDirectory>%windir%\system32</WorkingDirectory>
+								<CommandLine>$Config/Operation$</CommandLine>
+								<TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+								<RequireOutput>true</RequireOutput>
+							</WriteAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="WA" />
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<InputType>System!System.BaseData</InputType>
+			</WriteActionModuleType>
+			<WriteActionModuleType ID="Microsoft.Windows.Server.IIS.10.0.GenerateAlertAction.SuppressedByDescription" Accessibility="Internal" Batching="false">
+				<Configuration>
+					<xsd:element minOccurs="1" name="Priority" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="Severity" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element minOccurs="1" name="AlertMessageId" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+				</Configuration>
+				<OverrideableParameters>
+					<OverrideableParameter ID="Priority" Selector="$Config/Priority$" ParameterType="int" />
+					<OverrideableParameter ID="Severity" Selector="$Config/Severity$" ParameterType="int" />
+				</OverrideableParameters>
+				<ModuleImplementation Isolation="Any">
+					<Composite>
+						<MemberModules>
+							<WriteAction ID="Action" TypeID="SystemHealth!System.Health.GenerateAlert">
+								<Priority>$Config/Priority$</Priority>
+								<Severity>$Config/Severity$</Severity>
+								<AlertMessageId>$Config/AlertMessageId$</AlertMessageId>
+								<AlertParameters>
+									<AlertParameter1>$Data/EventDescription$</AlertParameter1>
+								</AlertParameters>
+								<Suppression>
+									<SuppressionValue>$Data/EventDescription$</SuppressionValue>
+								</Suppression>
+							</WriteAction>
+						</MemberModules>
+						<Composition>
+							<Node ID="Action" />
+						</Composition>
+					</Composite>
+				</ModuleImplementation>
+				<InputType>System!System.BaseData</InputType>
+			</WriteActionModuleType>
+		</ModuleTypes>
+	</TypeDefinitions>
+</ManagementPack>
+
