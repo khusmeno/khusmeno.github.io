@@ -1,1 +1,0 @@
-<ClassType ID="Microsoft.Windows.Server.ComputerGroup" Abstract="false" Accessibility="Public" Base="SC!Microsoft.SystemCenter.ComputerGroup" Hosted="false" Singleton="true" />

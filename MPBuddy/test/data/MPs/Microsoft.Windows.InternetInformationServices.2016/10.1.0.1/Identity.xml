@@ -1,8 +1,0 @@
-<ManagementPack ContentReadable="true" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<Manifest>
-		<Identity>	
-			<ID>Microsoft.Windows.InternetInformationServices.2016</ID>
-			<Version>10.1.0.1</Version>
-		</Identity>
-	</Manifest>
-</ManagementPack>

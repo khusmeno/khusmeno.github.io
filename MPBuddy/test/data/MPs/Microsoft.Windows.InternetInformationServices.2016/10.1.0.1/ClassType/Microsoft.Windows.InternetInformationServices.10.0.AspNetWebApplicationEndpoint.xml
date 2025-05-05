@@ -1,5 +1,0 @@
-<ClassType ID="Microsoft.Windows.InternetInformationServices.10.0.AspNetWebApplicationEndpoint" Accessibility="Public" Abstract="false" Base="IISCommon!Microsoft.Windows.InternetInformationServices.AspNetWebApplicationEndpoint" Hosted="true" Singleton="false">
-	<Property ID="ApplicationVRoot" Type="string" Key="true" CaseSensitive="false" MinLength="0" Length="256" />
-	<Property ID="IISApplicationName" Type="string" Key="false" CaseSensitive="false" MinLength="0" Length="256" />
-	<Property ID="Name" Type="string" Key="false" CaseSensitive="false" MinLength="0" Length="256" />
-</ClassType>
