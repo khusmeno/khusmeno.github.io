@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Load the XML file
     fetch('example.xml')
+    //  fetch('https://raw.githubusercontent.com/khusmeno/MPBuddyData_CSS_SystemCenter/refs/heads/master/Microsoft.Windows.InternetInformationServices.2016/10.1.0.1/ManagementPack.xml')
         .then(response => response.text())
         .then(data => {
             // Parse the XML
