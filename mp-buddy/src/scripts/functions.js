@@ -1,8 +1,8 @@
-﻿const productNameInHeader = "MP Buddy";
-const confidentialityText = "For internal use only";
-const productNameInTitle = "MP Buddy"; // Name of the product for the Title
+﻿const productNameInHeader = "MP Explorer";
+const productNameInTitle = productNameInHeader; // Name of the product for the Title
 const teamName = "Microsoft System Center Support team"; // Name of the team for the Footer
 const teamSupportUrl = "https://microsoft.github.io/CSS-SystemCenter/"
+const confidentialityText = "For internal use only";
 
 // Function to load an XML file and return the parsed XML document
 export function createHeader() {
