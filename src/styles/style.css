@@ -82,3 +82,12 @@ tbody tr:hover {
 tr:hover td {
     background-color: transparent;
 }
+
+header a, footer a {
+    color: white; /* Set the text color to white for better contrast */
+    text-decoration: none; /* Remove underline for a cleaner look */
+}
+
+    header a:hover, footer a:hover {
+        text-decoration: underline; /* Add underline on hover for better visibility */
+    }
