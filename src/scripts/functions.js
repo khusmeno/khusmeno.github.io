@@ -1,6 +1,7 @@
 ﻿const productNameInHeader = "MP Buddy";
 const confidentialityText = "For internal use only";
 const productNameInTitle = "MP Buddy"; // Name of the product for the Title
+const teamName = "Microsoft System Center Support team"; // Name of the team for the Footer
 
 // Function to load an XML file and return the parsed XML document
 export function createHeader() {
@@ -17,7 +18,7 @@ export function createHeader() {
 export function createFooter() {
     const footer = document.createElement('footer');
     footer.innerHTML = `
-        <p>${confidentialityText}</p>
+        <p>${teamName}</p>
     `;
     document.body.appendChild(footer); // Add the footer at the bottom of the body
 }
