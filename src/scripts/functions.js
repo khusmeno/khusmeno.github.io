@@ -19,7 +19,7 @@ export function createHeader() {
 export function createFooter() {
     const footer = document.createElement('footer');
     footer.innerHTML = `
-        <p><a href="${teamSupportUrl}">${teamName}</a></p>
+        <p><a href="${teamSupportUrl}" target="_blank">${teamName}</a></p>
     `;
     document.body.appendChild(footer); // Add the footer at the bottom of the body
 }
